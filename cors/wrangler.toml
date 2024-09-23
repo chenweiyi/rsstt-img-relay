@@ -1,6 +1,6 @@
-account_id = "454a781d3f76fc267a2c87da904f46cf"
+account_id = "ec8ce6a04fa9d04c9d80994e1cfe1cfe"
 name = "cors"
-type = "webpack"
-route = "cors.eu.org/*"
-workers_dev = false
-zone_id = "c026ed83583885087a863bf454b68a69"
+main= "index.js"
+compatibility_date = "2024-09-23"
+#route = "cors.eu.org/*"
+#workers_dev = false
