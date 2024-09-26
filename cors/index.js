@@ -20,6 +20,21 @@ const config = {
     sematextToken: "00000000-0000-0000-0000-000000000000",
     // 是否丢弃请求中的 Referer，在目标网站应用防盗链时有用
     dropReferer: true,
+    // need to deal
+    mapResource: {
+        ".weibocdn.com": {
+            referer: "https://weibo.com/"
+        },
+        ".sinaimg.cn": {
+            referer: "https://weibo.com/"
+        },
+        ".sspai.com": {
+            referer: "https://sspai.com/"
+        },
+        ".twimg.com": {
+            referer: "https://x.com/"
+        }
+    },
     // weibo workarounds
     weiboCDN: [".weibocdn.com", ".sinaimg.cn"],
     weiboReferer: "https://weibo.com/",
@@ -110,12 +125,18 @@ async function fetchHandler(request, env, ctx) {
             }
             if (config.dropReferer) {
                 const urlObj = new URL(url);
-                if (config.weiboCDN.some(x => urlObj.host.endsWith(x))) {
-                    // apply weibo workarounds
-                    fp.headers['referer'] = config.weiboReferer;
-                } else if (config.sspaiCDN.some(x => urlObj.host.endsWith(x))) {
-                    // apply sspai workarounds
-                    fp.headers['referer'] = config.sspaiReferer;
+                // if (config.weiboCDN.some(x => urlObj.host.endsWith(x))) {
+                //     // apply weibo workarounds
+                //     fp.headers['referer'] = config.weiboReferer;
+                // } else if (config.sspaiCDN.some(x => urlObj.host.endsWith(x))) {
+                //     // apply sspai workarounds
+                //     fp.headers['referer'] = config.sspaiReferer;
+                // }
+                const keys = Object.keys(config.mapResource);
+                for (let k of keys) {
+                    if (urlObj.host.endsWith(k)) {
+                        fp.headers['referer'] = config.mapResource[k].referer;
+                    }
                 }
             }
 
@@ -201,13 +222,13 @@ function fixUrl(url) {
 }
 
 // 阻断 url
-function blockUrl(url) {
+function blockUrl(url = "") {
     url = url.toLowerCase();
     let len = config.blockList.filter(x => url.includes(x)).length;
     return len != 0;
 }
 // 阻断 type
-function blockType(type) {
+function blockType(type = "") {
     type = type.toLowerCase();
     let len = config.typeList.filter(x => type.includes(x)).length;
     return len == 0;
