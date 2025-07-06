@@ -217,7 +217,7 @@ function fixUrl(url) {
     } else if (url.includes(':/')) {
         return url.replace(':/', '://');
     } else {
-        return "http://" + url;
+        return "https://" + url;
     }
 }
 
